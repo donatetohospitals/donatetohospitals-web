@@ -36,7 +36,7 @@ Schema
 - `USERS` - a user
 - `HOSPITALS` - These will be manually entered by us after corresponding with the hospital via email. 
 We must identify that they're legit, what supplies they need, and where/how they'd like it to be sent or dropped off 
-- `STOCKPILES` - These will be batches of `SUPPLIES` a user has
+- `STOCKPILES` - These will be batches of `ITEMS` a user has
 ```
 ID
 USER_ID: foreign key
