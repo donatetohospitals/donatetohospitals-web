@@ -12,7 +12,7 @@ Architecture
 Collaboration
 - 
 - Github for code
-- Github project board and issues for project management
+- [Github project board](https://github.com/donatetohospitals/donatetohospitals-web/projects/1) and issues for project management
 - Discord for chatter
 
 Stack
