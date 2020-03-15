@@ -1,0 +1,31 @@
+{{ define "content" }}
+    <!-- Header -->
+    <header class="bg-primary py-5 mb-5">
+        <div class="container h-100">
+            <div class="row h-100 align-items-center text-center">
+                <div class="col-lg-12">
+                    <h1 class="display-4 text-white mt-5 mb-5">Donate your stockpiled masks, gloves, and other equipment to hospitals to fight covid19</h1>
+                </div>
+            </div>
+            <div class="col-md-12 text-center cta-holder">
+                <a class="btn btn-light btn-lg mb-10" href="#">I have equipment to donate</a>
+                <a class="btn btn-light btn-lg mb-10" href="#">I am hospital staff</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Page Content -->
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <h1>Latest offered donations</h1>
+            </div>
+            <div class="col-md-8 offset-md-2">
+                {{ range .Suppliers }}
+                    {{ template "supplier" . }}
+                {{ end }}
+            </div>
+        </div>
+    </div>
+    <!-- /.container -->
+{{ end }}
