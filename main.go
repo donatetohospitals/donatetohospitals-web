@@ -12,6 +12,10 @@ import (
 	"strings"
 )
 
+var isProduction = os.Getenv("TARGET_ENV") == "release"
+var keyFile = os.Getenv("KEY_FILE")
+var certFile = os.Getenv("CERT_FILE")
+
 type Page struct {
 	Title      string
 	Suppliers  []Supplier
@@ -71,6 +75,7 @@ func volunteerHandler(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	fmt.Println("Starting server on port :9990")
+
 	fs := http.FileServer(http.Dir("./front"))
 
 	r := chi.NewRouter()
@@ -82,29 +87,39 @@ func main() {
 		fs.ServeHTTP(w, r)
 	}))
 
-	// fileserver
+	// file server
 	basePath := "/assets"
+
 	r.Route(basePath, func(root chi.Router) {
 		workDir, _ := os.Getwd()
 		filesDir := filepath.Join(workDir, "front")
 		FileServer(root, basePath, "/front", http.Dir(filesDir))
 	})
 
-	// TODO: serve https on prod
-	err := http.ListenAndServe(":9990", r)
+	allowedOrigins := []string{"*"}
+
+	if isProduction {
+		allowedOrigins = []string{"https://donatetohospitals.com", "https://www.donatetohospitals.com"}
+		err := http.ListenAndServeTLS(":9990", certFile, keyFile, r)
+
+		if err != nil {
+			fmt.Println("ListenAndServeTLS:", err)
+		}
+	} else {
+		err := http.ListenAndServe(":9990", r)
+		if err != nil {
+			fmt.Println("ListenAndServe:", err)
+		}
+	}
 
 	corsAssigned := cors.New(cors.Options{
-		AllowedOrigins:   []string{"*"},           // TODO: make conditional to prod env to only accept correct origin
+		AllowedOrigins:   allowedOrigins,
 		AllowedMethods:   []string{"GET", "POST"}, // , "PUT", "DELETE", "PATCH", "OPTIONS"
 		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
 		AllowCredentials: true,
 		MaxAge:           300, // Maximum value not ignored by any of major browsers
 	})
 	r.Use(corsAssigned.Handler)
-
-	if err != nil {
-		fmt.Println("ListenAndServe:", err)
-	}
 
 }
 
