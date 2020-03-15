@@ -70,7 +70,7 @@ func volunteerHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	fmt.Println("Starting server on port :3000")
+	fmt.Println("Starting server on port :9990")
 	fs := http.FileServer(http.Dir("./front"))
 
 	r := chi.NewRouter()
@@ -91,7 +91,7 @@ func main() {
 	})
 
 	// TODO: serve https on prod
-	err := http.ListenAndServe(":3000", r)
+	err := http.ListenAndServe(":9990", r)
 
 	corsAssigned := cors.New(cors.Options{
 		AllowedOrigins:   []string{"*"},           // TODO: make conditional to prod env to only accept correct origin
