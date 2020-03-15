@@ -1,0 +1,50 @@
+{{ define "layout" }}
+    <!DOCTYPE html>
+    <html lang="en">
+
+    <head>
+
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="Donate your stockpiles to help covid19 corona virus relief">
+        <meta name="author" content="DonateToHospitals">
+
+        <title>{{ .Title }}</title>
+
+        <!-- Bootstrap core CSS -->
+        <link href="assets/front/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+        <!-- Custom styles for this template -->
+        <link href="assets/front/css/business-frontpage.css" rel="stylesheet">
+
+    </head>
+
+    <body>
+
+    {{ template "navigation" . }}
+
+    {{ template "content" . }}
+
+    {{ if .WithFooter }}
+    <!-- Footer -->
+    <footer class="py-5 bg-dark">
+        <div class="container">
+            <p class="m-0 text-center text-white">
+                <a href="https://www.github.com/donatetohospitals/donatetohospitals-web" rel="noopener noreferrer" target="_blank">
+                    Open source. Chip in on GitHub if you have the means!
+                </a>
+            </p>
+        </div>
+        <!-- /.container -->
+    </footer>
+    {{ end }}
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="assets/front/vendor/jquery/jquery.min.js"></script>
+    <script src="assets/front/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    </body>
+
+    </html>
+
+{{ end }}
