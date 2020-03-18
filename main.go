@@ -2,15 +2,16 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/cors"
+	"github.com/go-chi/render"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/spf13/viper"
 	"html/template"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -84,31 +85,54 @@ func respondwithJSON(w http.ResponseWriter, code int, payload interface{}) {
 	w.Write(response)
 }
 
-func postSupplierHandler(w http.ResponseWriter, r *http.Request) {
-	var supResp SupResp
-	//fmt.Println("supResp created1", supResp, supResp.Email, supResp.Items)
-	//fmt.Println("email is1", supResp.Email)
-	//fmt.Println(r.Body)
-	//fmt.Println(supResp.Email)
-	doop, zop := ioutil.ReadAll(r.Body)
-	fmt.Println(string(doop), zop)
+// Render is the Renderer for ErrResponse struct
+func (e *ErrResponse) Render(w http.ResponseWriter, r *http.Request) error {
+	render.Status(r, e.HTTPStatusCode)
+	return nil
+}
 
-	err := json.NewDecoder(r.Body).Decode(&supResp)
-
+// ErrInvalidRequest is used to indicate an error on user input (with wrapped error)
+func ErrInvalidRequest(err error) render.Renderer {
+	var errorText string
 	if err != nil {
-		fmt.Println("supResp decode error:", err)
+		errorText = err.Error()
+	}
+	return &ErrResponse{
+		Err:            err,
+		HTTPStatusCode: http.StatusBadRequest,
+		StatusText:     "Invalid request.",
+		ErrorText:      errorText,
+	}
+}
+
+// ErrResponse is a generic struct for returning a standard error document
+type ErrResponse struct {
+	Err            error `json:"-"` // low-level runtime error
+	HTTPStatusCode int   `json:"-"` // http response status code
+
+	StatusText string `json:"status"`          // user-level status message
+	AppCode    int64  `json:"code,omitempty"`  // application-specific error code
+	ErrorText  string `json:"error,omitempty"` // application-level error message, for debugging
+}
+
+func postSupplierHandler(w http.ResponseWriter, r *http.Request) {
+	var supplier Supplier
+
+	if err := render.DecodeJSON(r.Body, &supplier); err != nil {
+		render.Render(w, r, ErrInvalidRequest(err))
+		return
 	}
 
-	//fmt.Println("supResp created2", supResp, supResp.Email, supResp.Items)
-	//fmt.Println("email is2", supResp.Email)
-	//query, err := db.Prepare("Insert supResps SET title=?, content=?")
-	//catch(err)
-	//
-	//_, er := query.Exec(supResp.Title, supResp.Content)
-	//catch(er)
-	//defer query.Close()
-	//
-	respondwithJSON(w, http.StatusCreated, map[string]string{"message": "successfully created", "email": supResp.Email})
+	create := db.Create(&supplier)
+
+	// TODO also persist items
+
+	if create.Error != nil {
+		render.Render(w, r, ErrInvalidRequest(errors.New("unable to save record in db")))
+		return
+	}
+
+	respondwithJSON(w, http.StatusCreated, map[string]string{"message": "successfully created"})
 }
 
 type Configuration struct {
@@ -129,10 +153,6 @@ type Supplier struct {
 	ImageUrl    string `gorm:"size:255"`  // set field size to 255
 	Items       []Item `gorm:"foreignkey:SupplierRefer"`
 	IsAllocated bool
-}
-
-type SupResp struct {
-	Email string
 }
 
 type Item struct {
