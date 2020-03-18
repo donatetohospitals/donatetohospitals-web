@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
@@ -73,6 +74,39 @@ func volunteerHandler(w http.ResponseWriter, r *http.Request) {
 	handleErr(err, "render")
 }
 
+// respondwithJSON write json response format
+func respondwithJSON(w http.ResponseWriter, code int, payload interface{}) {
+	response, _ := json.Marshal(payload)
+	fmt.Println(payload)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(code)
+	w.Write(response)
+}
+
+func postSupplierHandler(w http.ResponseWriter, r *http.Request) {
+	var supplier SupResp
+	//fmt.Println("supplier created1", supplier, supplier.Email, supplier.Items)
+	fmt.Println("email is1", supplier.Email)
+	fmt.Println(r.Body)
+	fmt.Println(supplier.Email)
+	err := json.NewDecoder(r.Body).Decode(&supplier)
+
+	if err != nil {
+		fmt.Println("supplier decode error:", err)
+	}
+
+	//fmt.Println("supplier created2", supplier, supplier.Email, supplier.Items)
+	fmt.Println("email is2", supplier.Email)
+	//query, err := db.Prepare("Insert suppliers SET title=?, content=?")
+	//catch(err)
+	//
+	//_, er := query.Exec(supplier.Title, supplier.Content)
+	//catch(er)
+	//defer query.Close()
+	//
+	respondwithJSON(w, http.StatusCreated, map[string]string{"message": "successfully created", "email": supplier.Email})
+}
+
 type Configuration struct {
 	Database DatabaseConfiguration
 }
@@ -91,6 +125,10 @@ type Supplier struct {
 	ImageUrl    string `gorm:"size:255"`  // set field size to 255
 	Items       []Item `gorm:"foreignkey:SupplierRefer"`
 	IsAllocated bool
+}
+
+type SupResp struct {
+	Email string
 }
 
 type Item struct {
@@ -141,6 +179,9 @@ func main() {
 	r.Get("/about", aboutHandler)
 	r.Get("/volunteer", volunteerHandler)
 
+	r.Route("/suppliers", func(r chi.Router) {
+		r.Post("/", postSupplierHandler)
+	})
 	r.Get("/front/vendor", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		fs.ServeHTTP(w, r)
 	}))
