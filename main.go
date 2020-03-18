@@ -10,6 +10,7 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/spf13/viper"
 	"html/template"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -84,27 +85,30 @@ func respondwithJSON(w http.ResponseWriter, code int, payload interface{}) {
 }
 
 func postSupplierHandler(w http.ResponseWriter, r *http.Request) {
-	var supplier SupResp
-	//fmt.Println("supplier created1", supplier, supplier.Email, supplier.Items)
-	fmt.Println("email is1", supplier.Email)
-	fmt.Println(r.Body)
-	fmt.Println(supplier.Email)
-	err := json.NewDecoder(r.Body).Decode(&supplier)
+	var supResp SupResp
+	//fmt.Println("supResp created1", supResp, supResp.Email, supResp.Items)
+	//fmt.Println("email is1", supResp.Email)
+	//fmt.Println(r.Body)
+	//fmt.Println(supResp.Email)
+	doop, zop := ioutil.ReadAll(r.Body)
+	fmt.Println(string(doop), zop)
+
+	err := json.NewDecoder(r.Body).Decode(&supResp)
 
 	if err != nil {
-		fmt.Println("supplier decode error:", err)
+		fmt.Println("supResp decode error:", err)
 	}
 
-	//fmt.Println("supplier created2", supplier, supplier.Email, supplier.Items)
-	fmt.Println("email is2", supplier.Email)
-	//query, err := db.Prepare("Insert suppliers SET title=?, content=?")
+	//fmt.Println("supResp created2", supResp, supResp.Email, supResp.Items)
+	//fmt.Println("email is2", supResp.Email)
+	//query, err := db.Prepare("Insert supResps SET title=?, content=?")
 	//catch(err)
 	//
-	//_, er := query.Exec(supplier.Title, supplier.Content)
+	//_, er := query.Exec(supResp.Title, supResp.Content)
 	//catch(er)
 	//defer query.Close()
 	//
-	respondwithJSON(w, http.StatusCreated, map[string]string{"message": "successfully created", "email": supplier.Email})
+	respondwithJSON(w, http.StatusCreated, map[string]string{"message": "successfully created", "email": supResp.Email})
 }
 
 type Configuration struct {
