@@ -1,10 +1,13 @@
 package main
 
 import (
+	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/cors"
+	"github.com/go-chi/render"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/spf13/viper"
@@ -71,6 +74,65 @@ func volunteerHandler(w http.ResponseWriter, r *http.Request) {
 	t := &Page{Title: templateTitle, WithFooter: false}
 	err := volunteerTemplate.ExecuteTemplate(w, "layout", t)
 	handleErr(err, "render")
+}
+
+// respondwithJSON write json response format
+func respondwithJSON(w http.ResponseWriter, code int, payload interface{}) {
+	response, _ := json.Marshal(payload)
+	fmt.Println(payload)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(code)
+	w.Write(response)
+}
+
+// Render is the Renderer for ErrResponse struct
+func (e *ErrResponse) Render(w http.ResponseWriter, r *http.Request) error {
+	render.Status(r, e.HTTPStatusCode)
+	return nil
+}
+
+// ErrInvalidRequest is used to indicate an error on user input (with wrapped error)
+func ErrInvalidRequest(err error) render.Renderer {
+	var errorText string
+	if err != nil {
+		errorText = err.Error()
+	}
+	return &ErrResponse{
+		Err:            err,
+		HTTPStatusCode: http.StatusBadRequest,
+		StatusText:     "Invalid request.",
+		ErrorText:      errorText,
+	}
+}
+
+// ErrResponse is a generic struct for returning a standard error document
+type ErrResponse struct {
+	Err            error `json:"-"` // low-level runtime error
+	HTTPStatusCode int   `json:"-"` // http response status code
+
+	StatusText string `json:"status"`          // user-level status message
+	AppCode    int64  `json:"code,omitempty"`  // application-specific error code
+	ErrorText  string `json:"error,omitempty"` // application-level error message, for debugging
+}
+
+func postSupplierHandler(w http.ResponseWriter, r *http.Request) {
+	var supplier Supplier
+
+	if err := render.DecodeJSON(r.Body, &supplier); err != nil {
+		render.Render(w, r, ErrInvalidRequest(err))
+		return
+	}
+
+	create := db.Create(&supplier)
+
+	// TODO also persist items
+
+	if create.Error != nil {
+		render.Render(w, r, ErrInvalidRequest(errors.New("unable to save record in db")))
+		return
+	}
+
+	respondwithJSON(w, http.StatusCreated, map[string]string{"message": "successfully created"})
 }
 
 type Configuration struct {
@@ -141,6 +203,9 @@ func main() {
 	r.Get("/about", aboutHandler)
 	r.Get("/volunteer", volunteerHandler)
 
+	r.Route("/suppliers", func(r chi.Router) {
+		r.Post("/", postSupplierHandler)
+	})
 	r.Get("/front/vendor", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		fs.ServeHTTP(w, r)
 	}))
