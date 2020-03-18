@@ -5,7 +5,11 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/cors"
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/postgres"
+	"github.com/spf13/viper"
 	"html/template"
+	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -16,21 +20,17 @@ var isProduction = os.Getenv("TARGET_ENV") == "release"
 var keyFile = os.Getenv("KEY_FILE")
 var certFile = os.Getenv("CERT_FILE")
 
+var templateTitle = "DonateToHospitals - Donate your stockpiles to help covid19 corona virus relief"
+
 type Page struct {
 	Title      string
 	Suppliers  []Supplier
 	WithFooter bool
 }
 
-type Supplier struct {
-	Index int8
-}
-
-var templateTitle = "DonateToHospitals - Donate your stockpiles to help covid19 corona virus relief"
-
-func handleRenderErr(err error) {
+func handleErr(err error, context string) {
 	if err != nil {
-		fmt.Println("Template rendering error:", err)
+		fmt.Println("Template rendering error with ", context+": ", err)
 	}
 }
 
@@ -42,10 +42,10 @@ var indexTemplate, _ = template.ParseFiles(
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
 	// TODO will be fetched from the db when there is one lul
-	s := []Supplier{{Index: 1}, {Index: 2}, {Index: 3}, {Index: 4}, {Index: 5}}
+	s := []Supplier{{}, {}, {}, {}, {}}
 	t := &Page{Title: templateTitle, Suppliers: s, WithFooter: true}
 	err := indexTemplate.ExecuteTemplate(w, "layout", t)
-	handleRenderErr(err)
+	handleErr(err, "render")
 }
 
 // TODO find out how not to have to do this for each page in order to cache it?
@@ -58,7 +58,7 @@ var aboutTemplate, _ = template.ParseFiles(
 func aboutHandler(w http.ResponseWriter, r *http.Request) {
 	t := &Page{Title: templateTitle, WithFooter: false}
 	err := aboutTemplate.ExecuteTemplate(w, "layout", t)
-	handleRenderErr(err)
+	handleErr(err, "render")
 }
 
 var volunteerTemplate, _ = template.ParseFiles(
@@ -70,11 +70,68 @@ var volunteerTemplate, _ = template.ParseFiles(
 func volunteerHandler(w http.ResponseWriter, r *http.Request) {
 	t := &Page{Title: templateTitle, WithFooter: false}
 	err := volunteerTemplate.ExecuteTemplate(w, "layout", t)
-	handleRenderErr(err)
+	handleErr(err, "render")
 }
+
+type Configuration struct {
+	Database DatabaseConfiguration
+}
+
+type DatabaseConfiguration struct {
+	DbName   string
+	Port     string
+	User     string
+	Password string
+}
+
+type Supplier struct {
+	gorm.Model
+	Email       string `gorm:"type:varchar(100);unique_index;not null"`
+	Geo         string `gorm:"index:geo"` // state etc. create index with name `loc` for address
+	ImageUrl    string `gorm:"size:255"`  // set field size to 255
+	Items       []Item `gorm:"foreignkey:SupplierRefer"`
+	IsAllocated bool
+}
+
+type Item struct {
+	gorm.Model
+	Name          string
+	Count         int
+	SupplierRefer uint
+}
+
+var db *gorm.DB
 
 func main() {
 	fmt.Println("Starting server on port :9990")
+
+	//config
+	var configuration Configuration
+	viper.AddConfigPath(".")
+	viper.SetConfigType("yaml")
+	viper.SetConfigName("config")
+
+	if err := viper.ReadInConfig(); err != nil {
+		log.Fatalf("Error reading config file, %s", err)
+	}
+	err := viper.Unmarshal(&configuration)
+	if err != nil {
+		log.Fatalf("unable to decode into struct, %v", err)
+	}
+
+	createdDb, err := gorm.Open("postgres", "host=localhost port="+configuration.Database.Port+" user="+configuration.Database.User+" dbname="+configuration.Database.DbName+" password="+configuration.Database.Password+" sslmode=disable")
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// TODO figure out how to assign to global variable without doing this
+	db = createdDb
+
+	defer db.Close()
+
+	db.AutoMigrate(&Supplier{})
+	db.AutoMigrate(&Item{})
 
 	fs := http.FileServer(http.Dir("./front"))
 
@@ -83,6 +140,7 @@ func main() {
 	r.Get("/", indexHandler)
 	r.Get("/about", aboutHandler)
 	r.Get("/volunteer", volunteerHandler)
+
 	r.Get("/front/vendor", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		fs.ServeHTTP(w, r)
 	}))
