@@ -1,0 +1,117 @@
+{{ define "content" }}
+    <!-- Page Content -->
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 pt-5 pb-5">
+                <div class="card">
+                    <div class="card-body">
+                        <h2>Instructions</h2>
+                        <p>Enter your email, your general location, what you have available, and the quantities/conditions of the items</p>
+                        <p>Once a match is made with a hospital in need you will be emailed precise shipping/drop off instructions.</p>
+                        <p>Posting is completely anonymous. Your email is only used to contact you when a match is made.</p>
+                        <p>Supplies needed include: Masks, gloves, hand sanitizer, soap, gowns, face shields, anything you can think of. We will inform you which of your supplies are needed.</p>
+                    </div>
+                </div>
+
+                <form class="mt-5">
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Email address</label>
+                        <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
+                        <small id="emailHelp" class="form-text text-muted">Your offered donation will be completely anonymous and your email address will be visible to no one but us</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="supplyImage1">Attach an image of the supplies you have available for donation</label>
+                        <input type="file" class="form-control-file" id="supplyImage1">
+                        <small id="imageHelp" class="form-text text-muted">Please include all supplies in one picture. Be careful not to include any personally identifiable information in the image.</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="locationSelect1">Location (state)</label>
+                        <select class="form-control" id="locationSelect1">
+                            <option>AL</option>
+                            <option>AK</option>
+                            <option>AZ</option>
+                            <option>AR</option>
+                            <option>CA</option>
+                            <option>CO</option>
+                            <option>CT</option>
+                            <option>DE</option>
+                            <option>FL</option>
+                            <option>GA</option>
+                            <option>HI</option>
+                            <option>ID</option>
+                            <option>IL</option>
+                            <option>IN</option>
+                            <option>IA</option>
+                            <option>KS</option>
+                            <option>KY</option>
+                            <option>LA</option>
+                            <option>ME</option>
+                            <option>MD</option>
+                            <option>MA</option>
+                            <option>MI</option>
+                            <option>MN</option>
+                            <option>MS</option>
+                            <option>MO</option>
+                            <option>MT</option>
+                            <option>NE</option>
+                            <option>NV</option>
+                            <option>NH</option>
+                            <option>NJ</option>
+                            <option>NM</option>
+                            <option>NY</option>
+                            <option>NC</option>
+                            <option>ND</option>
+                            <option>OH</option>
+                            <option>OK</option>
+                            <option>OR</option>
+                            <option>PA</option>
+                            <option>RI</option>
+                            <option>SC</option>
+                            <option>SD</option>
+                            <option>TN</option>
+                            <option>TX</option>
+                            <option>UT</option>
+                            <option>VT</option>
+                            <option>VA</option>
+                            <option>WA</option>
+                            <option>WV</option>
+                            <option>WI</option>
+                            <option>WY</option>
+                            <option>AS</option>
+                            <option>DC</option>
+                            <option>FM</option>
+                            <option>GU</option>
+                            <option>MH</option>
+                            <option>MP</option>
+                            <option>PW</option>
+                            <option>PR</option>
+                            <option>VI</option>
+                        </select>
+                        <small id="locationHelp" class="form-text text-muted">If you are outside the USA please email <a href="mailto:contact@donatetohospitals.com?subject=INTERNATIONAL SUPPLIER">contact@donatetohospitals.com</a> with the subject line INTERNATIONAL SUPPLIER and we'll email you when service outside the USA becomes available</small>
+                    </div>
+
+                    <h3>Item 1</h3>
+
+                    <div class="form-group">
+                        <label for="itemName1">Item name</label>
+                        <input type="text" class="form-control" id="itemName1" placeholder="Masks (n95)">
+                        <small id="itemNameHelp" class="form-text text-muted">Please specify item type, like 'Masks (n95)' or 'Masks (surgical)'</small>
+                        <label for="itemQuantity1">Quantity</label>
+                        <input type="number" class="form-control" id="itemQuantity1" placeholder="5">
+                        <label for="conditionSelect1">Condition</label>
+                        <select class="form-control" id="conditionSelect1">
+                            <option>New (sealed)</option>
+                            <option>Opened</option>
+                            <option>Homemade</option>
+                        </select>
+                    </div>
+                    <button id="btnAddItem" class="btn btn-success mb-4">Add Another Item</button>
+                    <br />
+                    <button type="submit" class="btn btn-primary btn-lg">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{{ end }}

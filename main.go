@@ -76,6 +76,17 @@ func volunteerHandler(w http.ResponseWriter, r *http.Request) {
 	handleErr(err, "render")
 }
 
+var supplyTemplate, _ = template.ParseFiles(
+	"templates/layout.html",
+	"templates/postSupplies.html",
+	"templates/navigation.html")
+
+func supplyHandler(w http.ResponseWriter, r *http.Request) {
+	t := &Page{Title: templateTitle, WithFooter: false}
+	err := supplyTemplate.ExecuteTemplate(w, "layout", t)
+	handleErr(err, "render")
+}
+
 // respondwithJSON write json response format
 func respondwithJSON(w http.ResponseWriter, code int, payload interface{}) {
 	response, _ := json.Marshal(payload)
@@ -124,8 +135,6 @@ func postSupplierHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	create := db.Create(&supplier)
-
-	// TODO also persist items
 
 	if create.Error != nil {
 		render.Render(w, r, ErrInvalidRequest(errors.New("unable to save record in db")))
@@ -202,6 +211,7 @@ func main() {
 	r.Get("/", indexHandler)
 	r.Get("/about", aboutHandler)
 	r.Get("/volunteer", volunteerHandler)
+	r.Get("/supply", supplyHandler)
 
 	r.Route("/suppliers", func(r chi.Router) {
 		r.Post("/", postSupplierHandler)
