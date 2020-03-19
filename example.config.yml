@@ -1,0 +1,5 @@
+database:
+  DbName: donatetohospitals
+  Port: 5432
+  User: yourpostgresuser
+  Password: yourpostgrespassword
