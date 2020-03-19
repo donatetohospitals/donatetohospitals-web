@@ -21,7 +21,7 @@ Stack
 - golang for language
 - http/template for templates
 - `chi`
-- postgres for db
+- postgres (gorm) for db
 - aws s3 for media
 - digitalocean for hosting
 - nginx
@@ -33,20 +33,7 @@ Application
 
 Schema
 -
-- `SUPPLIERS` - These will be batches of `ITEMS` a user has
-```
-ID
-EMAIL: string (kept private, only used to contact when matched with hospital)
-SUPPLIER_ID: foreign key
-STATE: int (will arbitrarily assign an int 1-50 to each state)
-IMAGE_URL: string
-```
-- `ITEMS` - This is an individual type of item a supplier has (gloves, masks, etc)
-```
-COUNT: int
-TITLE: string
-SUPPLIER_ID: foreign key
-```
+See the structs for `SUPPLIERS` and `ITEMS` in the code
 
 Hospitals won't even be in the db for now. We will correspond with them via email and do matching with `SUPPLIERS` by state manually. 
 We must identify that they're legit, what supplies they need, and where/how they'd like it to be sent or dropped off 
