@@ -51,6 +51,25 @@ SUPPLIER_ID: foreign key
 Hospitals won't even be in the db for now. We will correspond with them via email and do matching with `SUPPLIERS` by state manually. 
 We must identify that they're legit, what supplies they need, and where/how they'd like it to be sent or dropped off 
 
+To Create a test supplier with items in the DB
+-
+Note that you'll have to change the email each time if you want to post multiple
+```
+curl -i -X POST \
+   -H "Content-Type:application/json" \
+   -d \
+'{
+	"email": "awesome8@gmail.com",
+	"geo": "MN",
+	"ImageUrl": "https://donatetohospitalsdev.s3-us-west-1.amazonaws.com/supply-placeholder.png",
+	"items" : [
+		{"Name": "asdf3", "Count": 10}, {"Name": "asdf4", "Count": 20}	
+	]
+}' \
+ 'http://localhost:9990/suppliers'
+
+```
+
 Landing page
  -
 - Jumbotron explains what it is. Name and single sentence should explain it
