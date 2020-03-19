@@ -92,24 +92,35 @@
                         <small id="locationHelp" class="form-text text-muted">If you are outside the USA please email <a href="mailto:contact@donatetohospitals.com?subject=INTERNATIONAL SUPPLIER">contact@donatetohospitals.com</a> with the subject line INTERNATIONAL SUPPLIER and we'll email you when service outside the USA becomes available</small>
                     </div>
 
-                    <h3>Item 1</h3>
 
-                    <div class="form-group">
-                        <label for="itemName1">Item name</label>
-                        <input type="text" class="form-control" id="itemName1" placeholder="Masks (n95)">
-                        <small id="itemNameHelp" class="form-text text-muted">Please specify item type, like 'Masks (n95)' or 'Masks (surgical)'</small>
-                        <label for="itemQuantity1">Quantity</label>
-                        <input type="number" class="form-control" id="itemQuantity1" placeholder="5">
-                        <label for="conditionSelect1">Condition</label>
-                        <select class="form-control" id="conditionSelect1">
-                            <option>New (sealed)</option>
-                            <option>Opened</option>
-                            <option>Homemade</option>
-                        </select>
+                    <div class="card card-item mb-4">
+                        <div class="card-body">
+                            <div class="card-title">
+                                <h3>Item 1</h3>
+                            </div>
+                            <div class="form-group">
+                                <label for="itemName1">Item name</label>
+                                <input type="text" class="form-control" id="itemName1" placeholder="Masks (n95)">
+                                <small id="itemNameHelp" class="form-text text-muted">Please specify item type, like 'Masks (n95)' or 'Masks (surgical)'</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="itemQuantity1">Quantity</label>
+                                <input type="number" class="form-control" id="itemQuantity1" placeholder="5">
+                            </div>
+                            <div class="form-group">
+                                <label for="conditionSelect1">Condition</label>
+                                <select class="form-control" id="conditionSelect1">
+                                    <option>New (sealed)</option>
+                                    <option>Opened</option>
+                                    <option>Homemade</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
+
                     <button id="btnAddItem" class="btn btn-success mb-4">Add Another Item</button>
                     <br />
-                    <button type="submit" class="btn btn-primary btn-lg">Submit</button>
+                    <button type="submit" class="btn btn-primary btn-lg">Submit all items</button>  (This action cannot be undone)
                 </form>
             </div>
         </div>
