@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
@@ -137,9 +136,34 @@ func postSupplierHandler(w http.ResponseWriter, r *http.Request) {
 	create := db.Create(&supplier)
 
 	if create.Error != nil {
-		render.Render(w, r, ErrInvalidRequest(errors.New("unable to save record in db")))
+		//render.Render(w, r, ErrInvalidRequest(errors.New("unable to save record in db")))
+		respondwithJSON(w, http.StatusInternalServerError, map[string]string{"message": "unable to save record in db"})
 		return
 	}
+
+	respondwithJSON(w, http.StatusCreated, map[string]string{"message": "successfully created"})
+}
+
+func formSupplierHandler(w http.ResponseWriter, r *http.Request) {
+	// Not currently used. Can uncomment and use if we decide to send via html form submission instead of via js
+
+	//var supplier Supplier
+
+	err := r.ParseForm()
+	handleErr(err, "form parse error")
+	fmt.Println(r.FormValue("email"))
+
+	//if err := render.DecodeJSON(r.Body, &supplier); err != nil {
+	//	render.Render(w, r, ErrInvalidRequest(err))
+	//	return
+	//}
+	//
+	//create := db.Create(&supplier)
+	//
+	//if create.Error != nil {
+	//	render.Render(w, r, ErrInvalidRequest(errors.New("unable to save record in db")))
+	//	return
+	//}
 
 	respondwithJSON(w, http.StatusCreated, map[string]string{"message": "successfully created"})
 }
@@ -214,7 +238,8 @@ func main() {
 	r.Get("/supply", supplyHandler)
 
 	r.Route("/suppliers", func(r chi.Router) {
-		r.Post("/", postSupplierHandler)
+		r.Post("/", formSupplierHandler)
+		r.Post("/json", postSupplierHandler)
 	})
 	r.Get("/front/vendor", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		fs.ServeHTTP(w, r)
