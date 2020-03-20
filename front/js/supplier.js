@@ -55,7 +55,7 @@ $(function() {
         .serializeArray();
       return {
         name: deserialized[0].value,
-        count: deserialized[1].value ? 0 : Number(deserialized[1].value),
+        count: deserialized[1].value && Number(deserialized[1].value) ? Number(deserialized[1].value) : 0,
         condition: deserialized[2].value
       };
     });
