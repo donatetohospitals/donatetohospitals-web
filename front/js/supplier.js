@@ -85,7 +85,7 @@ $(function() {
       },
       function(errMsg) {
         console.error("error", errMsg);
-        alert(errMsg && errMsg.responseJSON && errMsg.responseJSON.error);
+        alert(errMsg && errMsg.responseJSON && errMsg.responseJSON.message + ". This is probably because this email has already been used. Please email contact@donatetohospitals.com to offer more items for donation using the same email");
       }
     );
   });
