@@ -28,7 +28,7 @@ type Page struct {
 	Title          string
 	Suppliers      []Supplier
 	WithFooter     bool
-	WithSupplierJs bool
+	WithSupplierJS bool
 }
 
 func handleErr(err error, context string) {
@@ -44,9 +44,9 @@ var indexTemplate, _ = template.ParseFiles(
 	"templates/supplier.html")
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
-	// TODO will be fetched from the db when there is one lul
-	s := []Supplier{{}, {}, {}, {}, {}}
-	t := &Page{Title: templateTitle, Suppliers: s, WithFooter: true}
+	var suppliers []Supplier
+	db.Set("gorm:auto_preload", true).Order("created_at desc").Find(&suppliers).Limit(10)
+	t := &Page{Title: templateTitle, Suppliers: suppliers, WithFooter: true, WithSupplierJS: false}
 	err := indexTemplate.ExecuteTemplate(w, "layout", t)
 	handleErr(err, "render")
 }
@@ -59,7 +59,7 @@ var aboutTemplate, _ = template.ParseFiles(
 	"templates/supplier.html")
 
 func aboutHandler(w http.ResponseWriter, r *http.Request) {
-	t := &Page{Title: templateTitle, WithFooter: false}
+	t := &Page{Title: templateTitle, WithFooter: false, WithSupplierJS: false}
 	err := aboutTemplate.ExecuteTemplate(w, "layout", t)
 	handleErr(err, "render")
 }
@@ -71,7 +71,7 @@ var volunteerTemplate, _ = template.ParseFiles(
 	"templates/supplier.html")
 
 func volunteerHandler(w http.ResponseWriter, r *http.Request) {
-	t := &Page{Title: templateTitle, WithFooter: false}
+	t := &Page{Title: templateTitle, WithFooter: false, WithSupplierJS: false}
 	err := volunteerTemplate.ExecuteTemplate(w, "layout", t)
 	handleErr(err, "render")
 }
@@ -83,7 +83,7 @@ var hospitalTemplate, _ = template.ParseFiles(
 	"templates/supplier.html")
 
 func hospitalHandler(w http.ResponseWriter, r *http.Request) {
-	t := &Page{Title: templateTitle, WithFooter: false}
+	t := &Page{Title: templateTitle, WithFooter: false, WithSupplierJS: false}
 	err := hospitalTemplate.ExecuteTemplate(w, "layout", t)
 	handleErr(err, "render")
 }
@@ -94,7 +94,7 @@ var supplyTemplate, _ = template.ParseFiles(
 	"templates/navigation.html")
 
 func supplyHandler(w http.ResponseWriter, r *http.Request) {
-	t := &Page{Title: templateTitle, WithFooter: false, WithSupplierJs: true}
+	t := &Page{Title: templateTitle, WithFooter: false, WithSupplierJS: true}
 	err := supplyTemplate.ExecuteTemplate(w, "layout", t)
 	handleErr(err, "render")
 }

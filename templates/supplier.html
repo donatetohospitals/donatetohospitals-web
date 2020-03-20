@@ -1,19 +1,17 @@
 {{ define "supplier" }}
     <div class="card mb-5">
-        <img class="card-img-top text-center" src="/assets/front/images/supply-placeholder.png" alt="Card image cap">
+        {{ if .ImageUrl }}
+            <img class="card-img-top text-center" src="{{ .ImageUrl }}" alt="Supplier image">
+        {{ end }}
         <div class="card-body">
-            <h5 class="card-title">Supplier {{ .ID }}</h5>
+            <h5 class="card-title">Supplier {{ if .Geo }} in {{ .Geo }} {{ end }}</h5>
             <p class="card-text">
             <ul>
-                <li>
-                    Gloves: 100
-                </li>
-                <li>
-                    Masks (surgical): 50
-                </li>
-                <li>
-                    Masks (N95): 10
-                </li>
+                {{ range .Items }}
+                    <li>
+                        {{ .Name }}: {{ .Count }}
+                    </li>
+                {{ end }}
             </ul>
             </p>
         </div>
