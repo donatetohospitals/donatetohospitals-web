@@ -7,6 +7,7 @@ require (
 	github.com/go-chi/cors v1.0.0
 	github.com/go-chi/render v1.0.1
 	github.com/jinzhu/gorm v1.9.12
+	github.com/pkg/errors v0.8.0
 	github.com/spf13/viper v1.6.2
 	golang.org/x/net v0.0.0-20200301022130-244492dfa37a // indirect
 )
