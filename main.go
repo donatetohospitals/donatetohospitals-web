@@ -25,9 +25,10 @@ var certFile = os.Getenv("CERT_FILE")
 var templateTitle = "DonateToHospitals - Donate your stockpiles to help covid19 corona virus relief"
 
 type Page struct {
-	Title      string
-	Suppliers  []Supplier
-	WithFooter bool
+	Title          string
+	Suppliers      []Supplier
+	WithFooter     bool
+	WithSupplierJs bool
 }
 
 func handleErr(err error, context string) {
@@ -81,7 +82,7 @@ var supplyTemplate, _ = template.ParseFiles(
 	"templates/navigation.html")
 
 func supplyHandler(w http.ResponseWriter, r *http.Request) {
-	t := &Page{Title: templateTitle, WithFooter: false}
+	t := &Page{Title: templateTitle, WithFooter: false, WithSupplierJs: true}
 	err := supplyTemplate.ExecuteTemplate(w, "layout", t)
 	handleErr(err, "render")
 }
@@ -181,11 +182,12 @@ type DatabaseConfiguration struct {
 
 type Supplier struct {
 	gorm.Model
-	Email       string `gorm:"type:varchar(100);unique_index;not null"`
-	Geo         string `gorm:"index:geo"` // state etc. create index with name `loc` for address
-	ImageUrl    string `gorm:"size:255"`  // set field size to 255
-	Items       []Item `gorm:"foreignkey:SupplierRefer"`
-	IsAllocated bool
+	Email        string `gorm:"type:varchar(100);unique_index;not null"`
+	Geo          string `gorm:"index:geo"` // state etc. create index with name `loc` for address
+	ImageUrl     string `gorm:"size:255"`  // set field size to 255
+	CloudinaryId string `gorm:"size:255"`  // set field size to 255
+	Items        []Item `gorm:"foreignkey:SupplierRefer"`
+	IsAllocated  bool
 }
 
 type Item struct {

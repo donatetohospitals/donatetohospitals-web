@@ -22,7 +22,8 @@
 
                     <div class="form-group">
                         <label for="supplyImage1">Attach an image of the supplies you have available for donation</label>
-                        <input name="ImageUrl" type="file" class="form-control-file" id="supplyImage1">
+                        <br />
+                        <button id="upload_widget" class="cloudinary-button">Upload files</button>
                         <small id="imageHelp" class="form-text text-muted">Please include all supplies in one picture. Be careful not to include any personally identifiable information in the image.</small>
                     </div>
 
@@ -120,7 +121,7 @@
 
                     <button id="btnAddItem" class="btn btn-success mb-4">Add Another Item</button>
                     <br />
-                    <button type="submit" class="btn btn-primary btn-lg">Submit all items</button>  (This action cannot be undone)
+                    <button id="btnSubmit" type="submit" class="btn btn-primary btn-lg">Submit all items</button>  (This action cannot be undone)
                 </form>
             </div>
         </div>
