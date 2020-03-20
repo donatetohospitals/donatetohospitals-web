@@ -75,6 +75,18 @@ func volunteerHandler(w http.ResponseWriter, r *http.Request) {
 	handleErr(err, "render")
 }
 
+var hospitalTemplate, _ = template.ParseFiles(
+	"templates/layout.html",
+	"templates/hospital.html",
+	"templates/navigation.html",
+	"templates/supplier.html")
+
+func hospitalHandler(w http.ResponseWriter, r *http.Request) {
+	t := &Page{Title: templateTitle, WithFooter: false}
+	err := hospitalTemplate.ExecuteTemplate(w, "layout", t)
+	handleErr(err, "render")
+}
+
 var supplyTemplate, _ = template.ParseFiles(
 	"templates/layout.html",
 	"templates/postSupplies.html",
@@ -235,6 +247,7 @@ func main() {
 	r.Get("/", indexHandler)
 	r.Get("/about", aboutHandler)
 	r.Get("/volunteer", volunteerHandler)
+	r.Get("/hospital", hospitalHandler)
 	r.Get("/supply", supplyHandler)
 
 	r.Route("/suppliers", func(r chi.Router) {
