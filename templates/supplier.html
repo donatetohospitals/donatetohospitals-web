@@ -9,7 +9,7 @@
             <ul>
                 {{ range .Items }}
                     <li>
-                        {{ .Name }}: {{ .Count }}
+                        {{ .Name }}: {{ .Count }} {{ .Condition }}
                     </li>
                 {{ end }}
             </ul>

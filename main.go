@@ -234,6 +234,7 @@ type Item struct {
 	Name          string
 	Count         int
 	SupplierRefer uint
+	Condition     string
 }
 
 var db *gorm.DB
