@@ -46,6 +46,13 @@ var indexTemplate, _ = template.ParseFiles(
 func indexHandler(w http.ResponseWriter, r *http.Request) {
 	var suppliers []Supplier
 	db.Set("gorm:auto_preload", true).Order("created_at desc").Find(&suppliers).Limit(10)
+
+	for idx, supplier := range suppliers {
+		if len(supplier.ImageUrl) > 0 {
+			suppliers[idx].ImageUrl = addTransformsToCloudinaryUrl(supplier.ImageUrl)
+		}
+	}
+
 	t := &Page{Title: templateTitle, Suppliers: suppliers, WithFooter: true, WithSupplierJS: false}
 	err := indexTemplate.ExecuteTemplate(w, "layout", t)
 	handleErr(err, "render")
@@ -136,6 +143,26 @@ type ErrResponse struct {
 	StatusText string `json:"status"`          // user-level status message
 	AppCode    int64  `json:"code,omitempty"`  // application-specific error code
 	ErrorText  string `json:"error,omitempty"` // application-level error message, for debugging
+}
+
+func addTransformsToCloudinaryUrl(s string) string {
+	transform := "w_250,h_250,c_fill"
+	section := "/upload/"
+
+	index := strings.Index(s, section)
+	if index < 0 {
+		return s
+	}
+
+	// not sure how else to append after the section instead of prepend
+	endSection := s[index:]
+	endIndex := strings.Index(endSection, "/v")
+	if endIndex < 0 {
+		return s
+	}
+
+	combined := s[:index] + section + transform + endSection[endIndex:]
+	return combined
 }
 
 func postSupplierHandler(w http.ResponseWriter, r *http.Request) {
