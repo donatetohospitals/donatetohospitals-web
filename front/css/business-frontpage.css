@@ -12,3 +12,9 @@ body {
   max-height: 250px;
   margin: 12px auto;
 }
+
+@media only screen and (max-width: 600px) {
+  .jumbo-text {
+    font-size: 2rem;
+  }
+}

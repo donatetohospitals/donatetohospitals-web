@@ -15,6 +15,7 @@ Collaboration
 - Github for code
 - [Github project board](https://github.com/donatetohospitals/donatetohospitals-web/projects/1) and issues for project management
 - [Discord for chatter](https://discord.gg/tbAmwZR) This is the best starting place to see how you can chip in
+- Volunteer project page at [https://helpwithcovid.com/projects/56](https://helpwithcovid.com/projects/56)
 
 Stack
 - 
