@@ -47,9 +47,9 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 	var suppliers []Supplier
 	db.Set("gorm:auto_preload", true).Order("created_at desc").Find(&suppliers).Limit(10)
 
-	for _, supplier := range suppliers {
+	for idx, supplier := range suppliers {
 		if len(supplier.ImageUrl) > 0 {
-			supplier.ImageUrl = addTransformsToCloudinaryUrl(supplier.ImageUrl)
+			suppliers[idx].ImageUrl = addTransformsToCloudinaryUrl(supplier.ImageUrl)
 		}
 	}
 
@@ -150,9 +150,16 @@ func addTransformsToCloudinaryUrl(s string) string {
 	section := "/upload/"
 
 	index := strings.Index(s, section)
+	if index < 0 {
+		return s
+	}
+
 	// not sure how else to append after the section instead of prepend
 	endSection := s[index:]
 	endIndex := strings.Index(endSection, "/v")
+	if endIndex < 0 {
+		return s
+	}
 
 	combined := s[:index] + section + transform + endSection[endIndex:]
 	return combined
