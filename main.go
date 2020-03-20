@@ -162,7 +162,7 @@ func addTransformsToCloudinaryUrl(s string) string {
 	}
 
 	combined := s[:index] + section + transform + endSection[endIndex:]
-	return combined
+	return strings.Replace(combined, "http://", "https://", 1)
 }
 
 func postSupplierHandler(w http.ResponseWriter, r *http.Request) {
