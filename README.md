@@ -17,6 +17,13 @@ Collaboration
 - [Discord for chatter](https://discord.gg/tbAmwZR) This is the best starting place to see how you can chip in
 - Volunteer project page at [https://helpwithcovid.com/projects/56](https://helpwithcovid.com/projects/56)
 
+Contributing
+- 
+- Clone the repo locally
+- Make sure postgres is set up on your computer
+- use the `example.config.yml` to create a `config.yml` with the name/user/password/port of a local postgres db
+- go run main.go and visit `localhost:9990`
+
 Stack
 - 
 - golang for language
