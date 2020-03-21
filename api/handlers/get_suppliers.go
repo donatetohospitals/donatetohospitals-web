@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/donatetohospitals/donatetohospitals-web/core"
+	"github.com/donatetohospitals/donatetohospitals-web/utils"
 )
 
 var supplyTemplate, _ = template.ParseFiles(
@@ -12,15 +13,19 @@ var supplyTemplate, _ = template.ParseFiles(
 	"templates/postSupplies.html",
 	"templates/navigation.html")
 
-func supplyHandler(s core.DonationService, title string, errorHandler templateErrorHandler) http.HandlerFunc {
+func GetSuppliersPage(s *core.DonationService, title string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
 		// TODO (daniel): fetch suppliers from service via s.GetAll() or some method alike
 
-		s := []core.Supplier{{}, {}, {}, {}, {}}
+		//s := []core.Supplier{{}, {}, {}, {}, {}}
 		t := &core.Page{Title: title, WithFooter: false}
 
 		err := supplyTemplate.ExecuteTemplate(w, "layout", t)
-		errorHandler(err, "render")
+
+		if err != nil {
+			// TODO (daniel): Wrap and bubble error
+			utils.TemplateError(err, "render")
+		}
 	}
 }

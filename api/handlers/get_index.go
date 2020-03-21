@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/donatetohospitals/donatetohospitals-web/core"
+	"github.com/donatetohospitals/donatetohospitals-web/utils"
 )
 
 var indexTemplate, _ = template.ParseFiles(
@@ -13,7 +14,8 @@ var indexTemplate, _ = template.ParseFiles(
 	"templates/navigation.html",
 	"templates/supplier.html")
 
-func indexHandler(s core.DonationService, title string, errorHandler templateErrorHandler) http.HandlerFunc {
+func GetIndexPage(
+	s *core.DonationService, title string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
 		// TODO (daniel): fetch suppliers from service via s.GetAll() or some method alike
@@ -22,6 +24,8 @@ func indexHandler(s core.DonationService, title string, errorHandler templateErr
 		t := &core.Page{Title: title, Suppliers: s, WithFooter: true}
 
 		err := indexTemplate.ExecuteTemplate(w, "layout", t)
-		errorHandler(err, "render")
+		if err != nil {
+			utils.TemplateError(err, "render")
+		}
 	}
 }

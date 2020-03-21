@@ -29,13 +29,22 @@ type donationService struct {
 	supplierRepo SupplierRepository
 	staffRepo    StaffRepository
 	itemRepo     ItemRepository
+	DB           *gorm.DB // NOTE(daniel): Temporary utility for http handlers to use
 }
 
 func NewDonationService(sc ServiceConfiguration) DonationService {
 	// Accept an interface, return a concrete type
-	return donationService{
+	return &donationService{
 		supplierRepo: sc.SupplierRepo,
 		staffRepo:    sc.StaffRepo,
 		itemRepo:     sc.ItemRepo,
+		DB:           sc.DB, // NOTE(daniel): this is meant as a workaround/placeholder
 	}
+}
+
+// Method definitions
+
+// Returns an instance of the underlying database used in the service
+func (s *donationService) GetDatabase() *gorm.DB {
+	return s.DB
 }

@@ -20,3 +20,6 @@ front/node_modules
 notes.txt
 
 config.yml./data
+data/
+.vscode/
+config.yaml
