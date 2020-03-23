@@ -16,9 +16,10 @@ import (
 
 type APIServer struct {
 	router *chi.Mux
+	address string
 }
 
-func (as *APIServer) setupRoutes(service *core.DonationService) {
+func (as *APIServer) setupRoutes(service core.DonationService) {
 
 	fs := http.FileServer(http.Dir("./front"))
 
@@ -67,29 +68,35 @@ func (as *APIServer) setupRoutes(service *core.DonationService) {
 		fileServer(root, basePath, "/front", http.Dir(filesDir))
 	})
 
-	allowedOrigins := []string{"*"}
-
-	//	corsAssigned := cors.New(cors.Options{
-	//		AllowedOrigins:   allowedOrigins,
-	//		AllowedMethods:   []string{"GET", "POST"}, // , "PUT", "DELETE", "PATCH", "OPTIONS"
-	//		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
-	//		AllowCredentials: true,
-	//		MaxAge:           300, // Maximum value not ignored by any of major browsers
-	//	})
-	//
-	//	r.Use(corsAssigned.Handler)
-
 }
 
-func (as *APIServer) Listen() {}
+func (as *APIServer) Listen() {
+		err := http.ListenAndServeTLS(":9990", certFile, keyFile, r)
+}
 
 type APIConfiguration struct {
 	service *core.DonationService
+	AllowedOrigins []string{}
+	Address string
 	// Cors, Logger, certificates and so on
 }
 
 func NewAPI(ac APIConfiguration) (APIServer, error) {
 	r := chi.NewRouter()
+
+	//allowedOrigins := []string{"*"}
+	allowedOrigins := ac.AllowedOrigins
+
+	corsAssigned := cors.New(cors.Options{
+			AllowedOrigins:   allowedOrigins,
+			AllowedMethods:   []string{"GET", "POST"}, // , "PUT", "DELETE", "PATCH", "OPTIONS"
+			AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+			AllowCredentials: true,
+			MaxAge:           300, // Maximum value not ignored by any of major browsers
+		})
+
+	r.Use(corsAssigned.Handler)
+
 	apiServer := APIServer{
 		router: r,
 	}
@@ -101,7 +108,12 @@ func NewAPI(ac APIConfiguration) (APIServer, error) {
 
 // FileServer conveniently sets up a http.FileServer handler to serve
 // static files from a http.FileSystem.
-func fileServer(r chi.Router, basePath string, path string, root http.FileSystem) {
+func fileServer(
+	r chi.Router,
+	basePath string,
+	path string,
+	root http.FileSystem
+) {
 	if strings.ContainsAny(path, "{}*") {
 		panic("FileServer does not permit URL parameters.")
 	}

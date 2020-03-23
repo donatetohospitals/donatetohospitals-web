@@ -13,7 +13,7 @@ var supplyTemplate, _ = template.ParseFiles(
 	"templates/postSupplies.html",
 	"templates/navigation.html")
 
-func GetSuppliersPage(s *core.DonationService, title string) http.HandlerFunc {
+func GetSuppliersPage(s core.DonationService, title string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
 		// TODO (daniel): fetch suppliers from service via s.GetAll() or some method alike

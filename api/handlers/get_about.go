@@ -16,7 +16,7 @@ var aboutTemplate, _ = template.ParseFiles(
 	"templates/supplier.html")
 
 func GetAboutPage(
-	s *core.DonationService,
+	s core.DonationService,
 	title string,
 ) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {

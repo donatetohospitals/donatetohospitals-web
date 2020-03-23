@@ -45,6 +45,6 @@ func NewDonationService(sc ServiceConfiguration) DonationService {
 // Method definitions
 
 // Returns an instance of the underlying database used in the service
-func (s *donationService) GetDatabase() *gorm.DB {
+func (s donationService) GetDatabase() *gorm.DB {
 	return s.DB
 }

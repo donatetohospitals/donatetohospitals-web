@@ -9,7 +9,7 @@ import (
 	"github.com/go-chi/render"
 )
 
-func PostSupplier(s *core.DonationService) http.HandlerFunc {
+func PostSupplier(s core.DonationService) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		var supplier core.Supplier

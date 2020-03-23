@@ -15,7 +15,7 @@ var volunteerTemplate, _ = template.ParseFiles(
 	"templates/supplier.html",
 )
 
-func GetVolunteersPage(s *core.DonationService, title string) http.HandlerFunc {
+func GetVolunteersPage(s core.DonationService, title string) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		t := &core.Page{Title: title, WithFooter: false}
